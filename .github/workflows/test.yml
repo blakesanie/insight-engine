@@ -1,0 +1,30 @@
+name: Test
+on: workflow_dispatch
+jobs:
+  first:
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7.7"
+      - name: checkout repo
+        uses: actions/checkout@v2
+        with:
+          repository: investivision/insight-service
+          token: ${{ secrets.PAT }}
+      - name: show tree before removal
+        run: tree -a .
+      - name: create dummy file
+        run: touch dummy.txt
+      - name: Save prices with retry
+        uses: Wandalen/wretry.action@v1.0.11
+        with:
+          action: peaceiris/actions-gh-pages@v3
+          with: |
+            personal_token: ${{ secrets.PAT }}
+            external_repository: investivision/insight-service
+            keep_files: true
+            publish_branch: prices
+            commit_message: update prices and starter insights for ${{ matrix.symbolsFile }}
+          attempt_limit: 999
