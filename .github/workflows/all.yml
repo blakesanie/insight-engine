@@ -1,0 +1,76 @@
+name: Insights-All
+on: workflow_dispatch
+jobs:
+  price-aggregation:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        symbolsFile: [200.csv, 400.csv, 800.csv, 1000.csv]
+    steps:
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7.7"
+      - name: checkout repo
+        uses: actions/checkout@v2
+        with:
+          repository: investivision/insight-service
+          token: ${{ secrets.PAT }}
+      - name: show tree before removal
+        run: tree -a .
+      - name: remove gitignore
+        run: rm -f .gitignore
+      - name: install dependencies
+        run: python -m pip install -r requirements_separate.txt
+      - name: run script
+        run: python separate.py ${{ matrix.symbolsFile }}
+      - name: show tree
+        run: tree -a .
+      - name: Save prices with retry
+        uses: Wandalen/wretry.action@v1.0.11
+        with:
+          action: peaceiris/actions-gh-pages@v3
+          with: |
+            personal_token: ${{ secrets.PAT }}
+            external_repository: investivision/insight-service
+            keep_files: true
+            publish_branch: prices
+            commit_message: update prices and starter insights for ${{ matrix.symbolsFile }}
+          attempt_limit: 999
+  insight-generation:
+    needs: price-aggregation
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7.7"
+      - name: download talib
+        run: |
+          wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
+          /usr/bin/tar -xvzf ./ta-lib-0.4.0-src.tar.gz
+          cd ta-lib/
+          ./configure --prefix=/usr
+          make
+          sudo make install
+      - name: checkout repo
+        uses: actions/checkout@v2
+        with:
+          ref: "prices"
+      - name: install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: generate insights
+        run: python main.py ${{ matrix.symbolsFile }}
+      - name: show tree
+        run: tree -a .
+      - name: Archive
+        uses: Wandalen/wretry.action@v1.0.11
+        with:
+          action: peaceiris/actions-gh-pages@v3
+          with: |
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: ./insights
+            keep_files: true
+            publish_branch: insights
+            commit_message: update for all insights
+          attempt_limit: 10
