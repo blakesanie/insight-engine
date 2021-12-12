@@ -5,7 +5,69 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        symbolsFile: [200.csv, 400.csv, 800.csv, 1000.csv]
+        symbolsFile:
+          [
+            50.csv,
+            100.csv,
+            150.csv,
+            200.csv,
+            250.csv,
+            300.csv,
+            350.csv,
+            400.csv,
+            450.csv,
+            500.csv,
+            550.csv,
+            600.csv,
+            650.csv,
+            700.csv,
+            750.csv,
+            800.csv,
+            850.csv,
+            900.csv,
+            950.csv,
+            1000.csv,
+            1050.csv,
+            1100.csv,
+            1150.csv,
+            1200.csv,
+            1250.csv,
+            1300.csv,
+            1350.csv,
+            1400.csv,
+            1450.csv,
+            1500.csv,
+            1550.csv,
+            1600.csv,
+            1650.csv,
+            1700.csv,
+            1750.csv,
+            1800.csv,
+            1850.csv,
+            1900.csv,
+            1950.csv,
+            2000.csv,
+            2050.csv,
+            2100.csv,
+            2150.csv,
+            2200.csv,
+            2250.csv,
+            2300.csv,
+            2350.csv,
+            2400.csv,
+            2450.csv,
+            2500.csv,
+            2550.csv,
+            2600.csv,
+            2650.csv,
+            2700.csv,
+            2750.csv,
+            2800.csv,
+            2850.csv,
+            2900.csv,
+            2950.csv,
+            3000.csv,
+          ]
     steps:
       - name: setup python
         uses: actions/setup-python@v2
@@ -56,6 +118,8 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v2
         with:
+          repository: investivision/insight-service
+          token: ${{ secrets.PAT }}
           ref: "prices"
       - name: install dependencies
         run: python -m pip install -r requirements.txt
@@ -68,7 +132,8 @@ jobs:
         with:
           action: peaceiris/actions-gh-pages@v3
           with: |
-            github_token: ${{ secrets.GITHUB_TOKEN }}
+            personal_token: ${{ secrets.PAT }}
+            external_repository: investivision/insight-service
             publish_dir: ./insights
             keep_files: true
             publish_branch: insights
