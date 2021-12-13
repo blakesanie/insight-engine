@@ -26,6 +26,8 @@ jobs:
         run: python separate.py ${{ matrix.symbolsFile }}
       - name: show tree
         run: tree -a .
+      - name: add all files
+        run: git add -A
       - name: show ignored files
         run: git status --ignored
       - name: Save prices with retry
