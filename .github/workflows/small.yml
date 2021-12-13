@@ -39,5 +39,6 @@ jobs:
             external_repository: investivision/insight-service
             keep_files: true
             publish_branch: prices
+            publish_dir: ./
             commit_message: update prices and starter insights for ${{ matrix.symbolsFile }}
           attempt_limit: 999
