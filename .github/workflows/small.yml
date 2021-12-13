@@ -26,8 +26,6 @@ jobs:
         run: python separate.py ${{ matrix.symbolsFile }}
       - name: show tree
         run: tree -a .
-      - name: add all files
-        run: git add -A
       - name: show ignored files
         run: git status --ignored
       - name: Save prices with retry
@@ -39,6 +37,5 @@ jobs:
             external_repository: investivision/insight-service
             keep_files: true
             publish_branch: prices
-            publish_dir: ./
             commit_message: update prices and starter insights for ${{ matrix.symbolsFile }}
           attempt_limit: 999
