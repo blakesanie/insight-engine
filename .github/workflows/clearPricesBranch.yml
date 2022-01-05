@@ -1,0 +1,24 @@
+name: Clear-Prices-Branch
+on: workflow_dispatch
+jobs:
+  clean-prices-branch:
+    needs: insight-generation
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v2
+        with:
+          repository: investivision/insight-service
+          token: ${{ secrets.PAT }}
+          ref: "prices"
+      - name: create dummy directory
+        run: mkdir dummy
+      - name: Remove Files
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.PAT }}
+          external_repository: investivision/insight-service
+          publish_dir: ./dummy
+          keep_files: false
+          publish_branch: prices
+          commit_message: clear branch
