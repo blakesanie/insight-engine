@@ -1,7 +1,7 @@
 name: Insights-All
 on:
   schedule:
-    - cron: "5 21 * * 1-5"
+    - cron: "0 21 * * 1-5"
   workflow_dispatch:
 jobs:
   price-aggregation:
