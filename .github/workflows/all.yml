@@ -55,6 +55,10 @@ jobs:
             4000.csv,
           ]
     steps:
+      - name: check env
+        run: |
+          echo $AWS_ACCESS_KEY_ID
+          echo $AWS_SECRET_ACCESS_KEY
       - name: setup python
         uses: actions/setup-python@v2
         with:
