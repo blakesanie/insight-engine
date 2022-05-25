@@ -69,6 +69,7 @@ jobs:
         with:
           repository: investivision/insight-service
           token: ${{ secrets.PAT }}
+          ref: "dynamo"
       - name: install dependencies
         run: python -m pip install -r requirements_separate.txt
       - name: run script
@@ -86,6 +87,7 @@ jobs:
         with:
           repository: investivision/insight-service
           token: ${{ secrets.PAT }}
+          ref: "dynamo"
       - name: install dependencies
         run: python -m pip install -r requirements.txt
       - name: generate insights
