@@ -52,7 +52,49 @@ jobs:
     needs: symbol-collection
     strategy:
       matrix:
-        symbolsFile: [100.csv, 200.csv, 300.csv, 400.csv]
+        symbolsFile:
+          [
+            100.csv,
+            200.csv,
+            300.csv,
+            400.csv,
+            500.csv,
+            600.csv,
+            700.csv,
+            800.csv,
+            900.csv,
+            1000.csv,
+            1100.csv,
+            1200.csv,
+            1300.csv,
+            1400.csv,
+            1500.csv,
+            1600.csv,
+            1700.csv,
+            1800.csv,
+            1900.csv,
+            2000.csv,
+            2100.csv,
+            2200.csv,
+            2300.csv,
+            2400.csv,
+            2500.csv,
+            2600.csv,
+            2700.csv,
+            2800.csv,
+            2900.csv,
+            3000.csv,
+            3100.csv,
+            3200.csv,
+            3300.csv,
+            3400.csv,
+            3500.csv,
+            3600.csv,
+            3700.csv,
+            3800.csv,
+            3900.csv,
+            4000.csv,
+          ]
     steps:
       - name: checkout repo
         uses: actions/checkout@v2
