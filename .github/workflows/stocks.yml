@@ -23,6 +23,9 @@ jobs:
       - name: Download
         working-directory: collection/stocks
         run: python nasdaq_stocks.py
+      - name: tree
+        working-directory: collection
+        run: tree .
       - name: Split symbols
         working-directory: collection
         run: python split_csv.py stocks/stocks.csv stocks/data
