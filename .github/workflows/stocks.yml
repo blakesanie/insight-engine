@@ -42,6 +42,11 @@ jobs:
         with:
           name: stock-collection
           path: collection/stocks/data
+      - name: Delete existing stock-insights artifact
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: stock-insights
+          failOnError: false
   price-aggregation:
     runs-on: ubuntu-latest
     needs: symbol-collection
@@ -78,11 +83,6 @@ jobs:
       - name: run script
         working-directory: separate
         run: python stocks.py ${{ matrix.symbolsFile }}
-      - name: Delete existing artifact
-        uses: geekyeggo/delete-artifact@v2
-        with:
-          name: stock-insights
-          failOnError: false
       - name: Upload stock insight artifacts
         uses: actions/upload-artifact@v3
         with:
