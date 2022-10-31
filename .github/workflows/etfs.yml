@@ -1,0 +1,163 @@
+name: ETF Analysis
+on:
+  workflow_dispatch:
+jobs:
+  symbol-collection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7.7"
+      - name: checkout repo
+        uses: actions/checkout@v2
+        with:
+          repository: investivision/insight-service
+          token: ${{ secrets.PAT }}
+          ref: "refactor"
+      - name: install dependencies
+        working-directory: collection
+        run: python -m pip install -r requirements.txt
+      - name: Download
+        working-directory: collection/etfs
+        run: python nasdaq_etfs.py
+      - name: tree
+        working-directory: collection
+        run: tree .
+      - name: Split symbols
+        working-directory: collection
+        run: python split_csv.py etfs/etfs.csv etfs/data
+      - name: tree
+        working-directory: collection
+        run: tree .
+      - name: Delete existing artifact
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: etf-collection
+          failOnError: false
+      - name: Upload collection csv artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: etf-collection
+          path: collection/etfs/data
+      - name: Delete existing etf-insights artifact
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: etfs-insights
+          failOnError: false
+  price-aggregation:
+    runs-on: ubuntu-latest
+    needs: symbol-collection
+    strategy:
+      matrix:
+        symbolsFile:
+          [
+            100.csv,
+            200.csv,
+            300.csv,
+            400.csv,
+            500.csv,
+            600.csv,
+            700.csv,
+            800.csv,
+            900.csv,
+            1000.csv,
+            1100.csv,
+            1200.csv,
+            1300.csv,
+            1400.csv,
+            1500.csv,
+            1600.csv,
+            1700.csv,
+            1800.csv,
+            1900.csv,
+            2000.csv,
+            2100.csv,
+            2200.csv,
+            2300.csv,
+            2400.csv,
+            2500.csv,
+            2600.csv,
+            2700.csv,
+            2800.csv,
+            2900.csv,
+            3000.csv,
+            3100.csv,
+            3200.csv,
+            3300.csv,
+            3400.csv,
+            3500.csv,
+            3600.csv,
+            3700.csv,
+            3800.csv,
+            3900.csv,
+            4000.csv,
+          ]
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v2
+        with:
+          repository: investivision/insight-service
+          token: ${{ secrets.PAT }}
+          ref: "refactor"
+      - name: Download collections artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: etf-collection
+          path: collection/etfs/data
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7.7"
+      - name: download talib
+        run: |
+          wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
+          /usr/bin/tar -xvzf ./ta-lib-0.4.0-src.tar.gz
+          cd ta-lib/
+          ./configure --prefix=/usr
+          make
+          sudo make install
+      - name: install dependencies
+        working-directory: separate
+        run: python -m pip install -r requirements.txt
+      - name: run script
+        working-directory: separate
+        run: python etfs.py ${{ matrix.symbolsFile }}
+      - name: Upload etf insight artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: etf-insights
+          path: separate/data/etfs
+  insight-generation:
+    needs: price-aggregation
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7.7"
+      - name: checkout repo
+        uses: actions/checkout@v2
+        with:
+          repository: investivision/insight-service
+          token: ${{ secrets.PAT }}
+          ref: "refactor"
+      - name: Download etf insight artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: etf-insights
+          path: separate/data/etfs
+      - name: install dependencies
+        working-directory: together
+        run: python -m pip install -r requirements.txt
+      - name: generate insights
+        working-directory: together
+        run: python etfs.py
+      - name: Archive
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: together/insights
+          keep_files: true
+          publish_branch: insights
+          commit_message: update
