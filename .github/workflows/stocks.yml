@@ -29,6 +29,9 @@ jobs:
       - name: Split symbols
         working-directory: collection
         run: python split_csv.py stocks/stocks.csv stocks/data
+      - name: tree
+        working-directory: collection
+        run: tree .
       - name: Delete existing artifact
         uses: geekyeggo/delete-artifact@v2
         with:
