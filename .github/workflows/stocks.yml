@@ -116,6 +116,7 @@ jobs:
       - name: Archive
         uses: peaceiris/actions-gh-pages@v3
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: together/insights
           keep_files: true
           publish_branch: insights
