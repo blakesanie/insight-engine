@@ -1,8 +1,6 @@
 name: Combine Insights
 on:
   push:
-    branches:
-      - combined
   workflow_dispatch:
 jobs:
   insight-processing:
