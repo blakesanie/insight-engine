@@ -4,10 +4,8 @@ on:
     branches:
       - combined
   workflow_dispatch:
-    branches:
-      - combined
 jobs:
-  symbol-collection:
+  insight-processing:
     runs-on: ubuntu-latest
     steps:
       - name: setup python
