@@ -155,11 +155,19 @@ jobs:
       - name: generate insights
         working-directory: together
         run: python stocks.py
-      - name: Archive
+      - name: Archive individual insights
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: together/insights
           keep_files: true
           publish_branch: insights
+          commit_message: update
+      - name: Archive combined insights
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: together/combinedInsights
+          keep_files: true
+          publish_branch: combined
           commit_message: update
