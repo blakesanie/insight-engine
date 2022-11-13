@@ -1,0 +1,20 @@
+name: Combine Insights
+on:
+  workflow_dispatch:
+jobs:
+  symbol-collection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7.7"
+      - name: checkout repo
+        uses: actions/checkout@v2
+        with:
+          ref: "combined"
+      - name: install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: combine files
+        run: python combine.py
+      - uses: stefanzweifel/git-auto-commit-action@v4
