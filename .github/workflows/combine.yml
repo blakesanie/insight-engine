@@ -1,6 +1,11 @@
 name: Combine Insights
 on:
+  push:
+    branches:
+      - combined
   workflow_dispatch:
+    branches:
+      - combined
 jobs:
   symbol-collection:
     runs-on: ubuntu-latest
