@@ -1,0 +1,147 @@
+name: Dividend Processing
+on:
+  workflow_dispatch:
+jobs:
+  symbol-collection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7.7"
+      - name: checkout repo
+        uses: actions/checkout@v2
+        with:
+          repository: investivision/insight-service
+          token: ${{ secrets.PAT }}
+          ref: "refactor"
+      - name: install dependencies
+        working-directory: dividends/collection
+        run: python -m pip install -r requirements.txt
+      - name: Download
+        working-directory: dividends/collection
+        run: python main.py
+      - name: Delete existing artifact
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: dividend-collection
+          failOnError: false
+      - name: Upload collection txt artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dividend-collection
+          path: dividends/collection/symbols
+      - name: Delete existing divident artifact
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: dividends
+          failOnError: false
+  dividend-aggregation:
+    runs-on: ubuntu-latest
+    needs: symbol-collection
+    strategy:
+      matrix:
+        symbolsFile:
+          [
+            100.txt,
+            200.txt,
+            300.txt,
+            400.txt,
+            500.txt,
+            600.txt,
+            700.txt,
+            800.txt,
+            900.txt,
+            1000.txt,
+            1100.txt,
+            1200.txt,
+            1300.txt,
+            1400.txt,
+            1500.txt,
+            1600.txt,
+            1700.txt,
+            1800.txt,
+            1900.txt,
+            2000.txt,
+            2100.txt,
+            2200.txt,
+            2300.txt,
+            2400.txt,
+            2500.txt,
+            2600.txt,
+            2700.txt,
+            2800.txt,
+            2900.txt,
+            3000.txt,
+            3100.txt,
+            3200.txt,
+            3300.txt,
+            3400.txt,
+            3500.txt,
+            3600.txt,
+            3700.txt,
+            3800.txt,
+            3900.txt,
+            4000.txt,
+          ]
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v2
+        with:
+          repository: investivision/insight-service
+          token: ${{ secrets.PAT }}
+          ref: "refactor"
+      - name: Download collections artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dividend-collection
+          path: dividends/collection/symbols
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7.7"
+      - name: install dependencies
+        working-directory: dividends/separate
+        run: python -m pip install -r requirements.txt
+      - name: run script
+        working-directory: dividends/separate
+        run: python main.py ${{ matrix.symbolsFile }}
+      - name: Upload dividend artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dividends
+          path: dividends/separate/data
+
+  dividends-together:
+    needs: dividend-aggregation
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7.7"
+      - name: checkout repo
+        uses: actions/checkout@v2
+        with:
+          repository: investivision/insight-service
+          token: ${{ secrets.PAT }}
+          ref: "refactor"
+      - name: Download dividend artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dividends
+          path: dividends/separate/data
+      - name: install dependencies
+        working-directory: dividends/together
+        run: python -m pip install -r requirements.txt
+      - name: combine dividends
+        working-directory: dividends/together
+        run: python main.py
+      - name: Archive individual insights
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dividends/together/data
+          keep_files: true
+          publish_branch: dividends
+          commit_message: update
