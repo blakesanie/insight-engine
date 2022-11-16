@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 import numpy as np
+import time
 
 
 class NumpyArrayEncoder(json.JSONEncoder):
@@ -24,5 +25,10 @@ if __name__ == '__main__':
         val = df.loc[symbol].dropna().to_dict()
         big[symbol] = val
         
+    contents = {
+        "timestamp": int(time.time()),
+        "data": big
+    }
+        
     with open(f'combined.json', 'w') as outfile:
-        json.dump(big, outfile, cls=NumpyArrayEncoder)
+        json.dump(contents, outfile, cls=NumpyArrayEncoder)
