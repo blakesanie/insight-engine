@@ -171,3 +171,8 @@ jobs:
           keep_files: true
           publish_branch: combined
           commit_message: update
+      - name: Trigger combine
+        working-directory: together
+        env:
+          PAT: ${{ secrets.PAT }}
+        run: python triggerCombine.py
