@@ -19,16 +19,9 @@ if __name__ == '__main__':
     df = pd.concat((stocksDf, etfsDf))
 
     df.to_parquet('./combined.parquet')
-
-    big = {}
-    for symbol in df.index.values:
-        val = df.loc[symbol].dropna().to_dict()
-        big[symbol] = val
+    
+    with open('combined.csv', 'w') as f:
+        f.write(str(int(time.time())) + '\n')
         
-    contents = {
-        "timestamp": int(time.time()),
-        "data": big
-    }
-        
-    with open(f'combined.json', 'w') as outfile:
-        json.dump(contents, outfile, cls=NumpyArrayEncoder)
+    df.to_csv('combined.csv', mode='a')
+    
