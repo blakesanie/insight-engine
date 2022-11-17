@@ -20,8 +20,10 @@ if __name__ == '__main__':
 
     df.to_parquet('./combined.parquet')
     
+    print(repr(df["bullPattern_3mo"].loc["MCS"]))
+    
     with open('combined.csv', 'w') as f:
         f.write(str(int(time.time())) + '\n')
         
-    df.to_csv('combined.csv', mode='a')
-    
+    with np.printoptions(linewidth=100000000):
+        df.to_csv('combined.csv', mode='a')
