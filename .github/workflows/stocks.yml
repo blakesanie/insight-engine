@@ -110,7 +110,7 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v3
         with:
-          python-version: "3.7.7"
+          python-version: "3.11.1"
       - name: download talib
         run: |
           wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
@@ -137,7 +137,7 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v3
         with:
-          python-version: "3.7.7"
+          python-version: "3.11.1"
       - name: checkout repo
         uses: actions/checkout@v3
         with:
