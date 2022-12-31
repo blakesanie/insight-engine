@@ -1,6 +1,8 @@
 name: Dividend Processing
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 12 * * 6"
 jobs:
   symbol-collection:
     runs-on: ubuntu-latest
