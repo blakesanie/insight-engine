@@ -72,6 +72,7 @@ def renameDf(df):
     df.index.names = ['Symbol']
     df.rename(columns=renamings, inplace=True)
     sortedCols = sorted(df.columns, key=lambda x: x.lower().replace("10y", "0").replace("5y", "1").replace("1y", "2"))
+    print('duplicated cols', df.index.duplicated())
     df = df.reindex(sortedCols, axis=1)
     
     for colName, dtype in zip(df.columns, df.dtypes):
