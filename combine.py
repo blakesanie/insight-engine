@@ -47,19 +47,18 @@ def renameDf(df):
             newCol = "num " + colName
             df[newCol] = df[colName].apply(lambda x: len(x) if x is not None else None)
             df[colName] = df[colName].apply(lambda x: ' | '.join([candleMap[candle] for candle in x]) if x is not None else None)
+    toDrop = []
     for colName in df.columns:
         print(colName)
         split = colName.split('_')
         key = split[0]
         out = key
         if key[-1] == '%':
-            out = key[:-1]
+            toDrop.append(colName)
         if out in translations:
             out = translations[out]
         else:
             out = camelCaseSplit(out)
-        if key[-1] == '%':
-            out += " %ile"
         if len(split) > 1:
             timeframe = split[1]
             out += " "
@@ -70,6 +69,7 @@ def renameDf(df):
         renamings[colName] = out
         
     df.index.names = ['Symbol']
+    df.drop(columns=toDrop, inplace=True)
     df.rename(columns=renamings, inplace=True)
     sortedCols = sorted(df.columns, key=lambda x: x.lower().replace("10y", "0").replace("5y", "1").replace("1y", "2"))
     print('duplicated cols', df.index.duplicated())
